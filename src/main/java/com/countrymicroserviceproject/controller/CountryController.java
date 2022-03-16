@@ -42,25 +42,30 @@ public class CountryController {
         public ResponseEntity<Country> getCountryByName(@RequestParam(value = "name") String countryName){
         try{
         Country country = countryService.getCountryByName(countryName);
-        return new ResponseEntity<Country>(country, HttpStatus.OK);
+        return new ResponseEntity<Country>(country, HttpStatus.FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/addcountry")
-        public Country insertCountry(@RequestBody Country country){
-        return countryService.addCountry(country);
-    }
+        public ResponseEntity<Country> insertCountry(@RequestBody Country country){
+         try{
+         countryService.addCountry(country);
+         return new ResponseEntity<>(country,HttpStatus.CREATED);
+    }catch(Exception e){
+             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+         }
+     }
 
     @PutMapping("/updatecountry/{id}")
     public ResponseEntity<Country> updateCountry(@PathVariable(value = "id") int id, @RequestBody Country country){
         try{
-       Country countryFound  = countryService.getCountryById(id);
+       Country checkCountry  = countryService.getCountryById(id);
 
-       countryFound.setCountryName(country.getCountryName());
-       countryFound.setCountryCapital(country.getCountryCapital());
-       Country updatedCountry = countryService.updateCountry(countryFound);
+       checkCountry.setCountryName(country.getCountryName());
+       checkCountry.setCountryCapital(country.getCountryCapital());
+       Country updatedCountry = countryService.updateCountry(checkCountry);
        return new ResponseEntity<Country>(updatedCountry,HttpStatus.OK);
     } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
